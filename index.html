@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitcoin History Newsletter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold:       #C8963E;
+      --gold-light: #E8B86D;
+      --gold-pale:  #F5E9D3;
+      --dark:       #0F0E0C;
+      --dark-2:     #1A1814;
+      --dark-3:     #252320;
+      --warm-white: #FAF7F2;
+      --text-muted: #8A8578;
+      --border:     rgba(200, 150, 62, 0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--warm-white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(15,14,12,0.95), transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: var(--gold);
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+    }
+
+    .nav-logo-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--warm-white);
+      opacity: 0.8;
+    }
+
+    .nav-cta {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 0.45rem 1.1rem;
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold);
+      color: var(--dark);
+      border-color: var(--gold);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 6rem;
+      overflow: hidden;
+    }
+
+    /* radial glow behind hero */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(200,150,62,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s ease forwards;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '—';
+      margin: 0 0.6rem;
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s ease forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: rgba(250,247,242,0.6);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s ease forwards;
+    }
+
+    /* ── SUBSCRIBE FORM ── */
+    .subscribe-wrap {
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s ease forwards;
+    }
+
+    /* Beehiiv embed will go here — styled to blend in */
+    .beehiiv-placeholder {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 2.5rem;
+      max-width: 460px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .beehiiv-placeholder p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Inline form fallback styling (replace with Beehiiv embed) */
+    .form-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .form-row input[type="email"] {
+      flex: 1;
+      background: var(--dark-3);
+      border: 1px solid var(--border);
+      color: var(--warm-white);
+      padding: 0.75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-row input[type="email"]:focus {
+      border-color: var(--gold);
+    }
+
+    .form-row input[type="email"]::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-subscribe {
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      padding: 0.75rem 1.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-subscribe:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    .form-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 60px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── VALUE PROPS ── */
+    .props-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .prop-card {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.75rem;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .prop-card:hover {
+      border-color: rgba(200,150,62,0.45);
+      transform: translateY(-3px);
+    }
+
+    .prop-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .prop-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .prop-desc {
+      font-size: 0.85rem;
+      color: rgba(250,247,242,0.55);
+      line-height: 1.65;
+    }
+
+    /* ── ABOUT ── */
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-portrait {
+      position: relative;
+    }
+
+    .about-portrait-frame {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .about-portrait-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,150,62,0.08), transparent 60%);
+    }
+
+    .portrait-initials {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--gold);
+      opacity: 0.3;
+    }
+
+    /* If you drop in a real <img> tag, it'll fill the frame */
+    .about-portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .about-portrait-caption {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .about-content p {
+      color: rgba(250,247,242,0.7);
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+
+    .credentials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .credential {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: rgba(250,247,242,0.55);
+    }
+
+    .credential::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ── ARCHIVE ── */
+    #archive {
+      padding-bottom: 8rem;
+    }
+
+    .archive-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .archive-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .archive-card {
+      background: var(--dark);
+      padding: 1.5rem 1.75rem;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .archive-card:hover {
+      background: var(--dark-2);
+    }
+
+    .archive-card:hover .archive-card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .archive-card-date {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .archive-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      line-height: 1.4;
+      margin-bottom: 0.4rem;
+    }
+
+    .archive-card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .archive-card-arrow {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.75rem;
+      color: var(--gold);
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: all 0.2s ease;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ARCHIVE BROWSE BTN ── */
+    .archive-browse-btn {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+
+    .archive-browse-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.25rem; }
+
+      .about-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .about-portrait-frame {
+        aspect-ratio: 4/3;
+        max-height: 260px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .archive-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .archive-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">₿</div>
+      <span class="nav-logo-text">Bitcoin History</span>
+    </a>
+    <a href="#subscribe" class="nav-cta">Subscribe Free</a>
+  </nav>
+
+
+  <!-- ══ HERO ══ -->
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="hero-eyebrow">Weekly Newsletter</span>
+      <h1 class="hero-title">
+        13 Years of<br /><em>Bitcoin History,</em><br />One Week at a Time
+      </h1>
+      <p class="hero-sub">
+        The most important events, ideas, and moments in Bitcoin — curated every week by the journalist who has been there since the beginning.
+      </p>
+      <div class="subscribe-wrap" id="subscribe">
+
+        <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+        <iframe src="https://subscribe-forms.beehiiv.com/9f5fbedc-27f7-4f36-984d-d81bd5919fa6" class="beehiiv-embed" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="width: 560px; height: 291px; margin: 0; border-radius: 0px 0px 0px 0px !important; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"></iframe>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ WHY THIS NEWSLETTER ══ -->
+  <section>
+    <div class="section-label">Why Subscribe</div>
+    <h2 class="section-title reveal">The Bitcoin archive<br />you've been missing</h2>
+    <p class="reveal" style="color: rgba(250,247,242,0.6); max-width: 560px; font-size: 1rem;">
+      Bitcoin has a rich, complicated history that shapes everything happening today. Most people only know the last cycle. Pete Rizzo has documented all of it.
+    </p>
+
+    <div class="props-grid">
+      <div class="prop-card reveal">
+        <div class="prop-number">13</div>
+        <div class="prop-title">Years of Primary Research</div>
+        <div class="prop-desc">Pete has been reporting on Bitcoin since 2013 — longer than most people have known what Bitcoin is.</div>
+      </div>
+      <div class="prop-card reveal">
+        <div class="prop-number">30+</div>
+        <div class="prop-title">Deep-Dive Editions</div>
+        <div class="prop-desc">A growing archive of editions covering key moments, figures, and decisions that shaped Bitcoin's trajectory.</div>
+      </div>
+      <div class="prop-card reveal">
+        <div class="prop-number">1×</div>
+        <div class="prop-title">Weekly, Worth Reading</div>
+        <div class="prop-desc">No daily noise. One well-researched edition per week that adds context to what's happening right now.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ ABOUT ══ -->
+  <section id="about">
+    <div class="section-label">The Author</div>
+    <div class="about-inner">
+
+      <div class="about-portrait reveal">
+        <div class="about-portrait-frame">
+          <!--
+            DROP A PHOTO OF PETE HERE:
+            <img src="pete-rizzo.jpg" alt="Pete Rizzo" />
+
+            Or leave the initials as-is until you have one.
+          -->
+          <span class="portrait-initials">PR</span>
+        </div>
+        <p class="about-portrait-caption">Pete Rizzo — Bitcoin Historian</p>
+      </div>
+
+      <div class="about-content">
+        <h2 class="section-title reveal">Pete Rizzo</h2>
+        <p class="reveal">
+          Pete Rizzo is one of the longest-serving journalists in Bitcoin, with a career spanning over a decade of covering the space at the highest level. He doesn't just report on Bitcoin — he has lived through its most pivotal moments and has the archives to prove it.
+        </p>
+        <p class="reveal">
+          His writing connects the dots between Bitcoin's past and present, giving readers the kind of historical context that turns noise into signal. Whether you're a seasoned Bitcoiner or just starting out, this newsletter puts the current moment in perspective.
+        </p>
+
+        <div class="credentials reveal">
+          <div class="credential">Editor in Chief, CoinDesk (2013–2020)</div>
+          <div class="credential">Editor, Bitcoin Magazine (2020–2024)</div>
+          <div class="credential">Editor-at-Large, Kraken</div>
+          <div class="credential">President, BitcoinTreasuries.net</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ ARCHIVE ══ -->
+  <section id="archive">
+    <div class="archive-header">
+      <div>
+        <div class="section-label">Past Editions</div>
+        <h2 class="section-title reveal">30+ Editions in the Archive</h2>
+      </div>
+    </div>
+
+    <p class="reveal" style="color: rgba(250,247,242,0.6); max-width: 560px; font-size: 1rem; margin-bottom: 2.5rem;">
+      Every edition Pete has written is available to read in full — from deep dives into Bitcoin's earliest days to the moments that defined each cycle. No paywall, no sign-in required.
+    </p>
+
+    <a href="https://bitcoinhistorynewsletter.beehiiv.com/posts" target="_blank" class="archive-browse-btn reveal">
+      Browse All Editions →
+    </a>
+  </section>
+
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="footer-logo">Bitcoin History Newsletter</div>
+    <p class="footer-sub">© 2025 Pete Rizzo · All rights reserved</p>
+  </footer>
+
+
+  <!-- ══ SCROLL REVEAL JS ══ -->
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
