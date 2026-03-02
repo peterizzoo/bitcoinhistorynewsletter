@@ -3,21 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bitcoin History Newsletter</title>
+  <title>Rizzo's Newsletter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
+      /* Soft gold background sampled from your swatch */
+      --bg:         #E8B86E;
+
+      /* Accent golds */
       --gold:       #C8963E;
-      --gold-light: #E8B86D;
+      --gold-light: #E8B86E;
       --gold-pale:  #F5E9D3;
-      --dark:       #0F0E0C;
-      --dark-2:     #1A1814;
-      --dark-3:     #252320;
-      --warm-white: #FAF7F2;
-      --text-muted: #8A8578;
-      --border:     rgba(200, 150, 62, 0.18);
+
+      /* Text & neutrals */
+      --dark:       #0F0E0C;   /* primary text */
+      --dark-2:     rgba(255,255,255,0.70); /* surfaces */
+      --dark-3:     rgba(255,255,255,0.85); /* inputs */
+      --warm-white: #0F0E0C;   /* text (kept name for compatibility) */
+      --text-muted: rgba(15,14,12,0.55);
+      --border:     rgba(15,14,12,0.14);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,8 +31,8 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--dark);
-      color: var(--warm-white);
+      background: var(--bg);
+      color: var(--dark);
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
       line-height: 1.7;
@@ -41,7 +47,7 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
-      opacity: 0.6;
+      opacity: 0.25;
     }
 
     /* ── NAV ── */
@@ -53,7 +59,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(15,14,12,0.95), transparent);
+      background: linear-gradient(to bottom, rgba(232,184,110,0.92), transparent);
       backdrop-filter: blur(4px);
     }
 
@@ -83,7 +89,7 @@
       font-size: 0.8rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--warm-white);
+      color: var(--dark);
       opacity: 0.8;
     }
 
@@ -103,6 +109,29 @@
       background: var(--gold);
       color: var(--dark);
       border-color: var(--gold);
+    }
+
+    
+    .nav-links{
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-right: 1rem;
+    }
+    .nav-link{
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(15,14,12,0.78);
+      text-decoration: none;
+      padding: 0.25rem 0.2rem;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .nav-link:hover{
+      color: var(--dark);
+      border-bottom-color: rgba(15,14,12,0.35);
     }
 
     /* ── HERO ── */
@@ -126,7 +155,7 @@
       transform: translate(-50%, -60%);
       width: 700px;
       height: 700px;
-      background: radial-gradient(ellipse, rgba(200,150,62,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(15,14,12,0.08) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -169,7 +198,7 @@
 
     .hero-sub {
       font-size: clamp(1rem, 2vw, 1.15rem);
-      color: rgba(250,247,242,0.6);
+      color: rgba(15,14,12,0.60);
       max-width: 520px;
       margin: 0 auto 2.5rem;
       opacity: 0;
@@ -177,6 +206,25 @@
     }
 
     /* ── SUBSCRIBE FORM ── */
+    .subscribe-card{
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.25rem 0.75rem;
+      max-width: 620px;
+      margin: 0 auto;
+      box-shadow: 0 18px 40px rgba(15,14,12,0.10);
+    }
+    .subscribe-card-title{
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0.25rem 0 1rem;
+      letter-spacing: -0.01em;
+    }
+    .beehiiv-embed{ border-radius: 12px !important; }
+
     .subscribe-wrap {
       opacity: 0;
       animation: fadeUp 0.9s 0.65s ease forwards;
@@ -211,7 +259,7 @@
       flex: 1;
       background: var(--dark-3);
       border: 1px solid var(--border);
-      color: var(--warm-white);
+      color: var(--dark);
       padding: 0.75rem 1rem;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.9rem;
@@ -309,7 +357,7 @@
     }
 
     .prop-card {
-      background: var(--dark-2);
+      background: rgba(255,255,255,0.72);
       border: 1px solid var(--border);
       border-radius: 4px;
       padding: 1.75rem;
@@ -339,7 +387,7 @@
 
     .prop-desc {
       font-size: 0.85rem;
-      color: rgba(250,247,242,0.55);
+      color: rgba(15,14,12,0.55);
       line-height: 1.65;
     }
 
@@ -402,7 +450,7 @@
     }
 
     .about-content p {
-      color: rgba(250,247,242,0.7);
+      color: rgba(15,14,12,0.70);
       margin-bottom: 1.2rem;
       font-size: 1rem;
     }
@@ -419,7 +467,7 @@
       align-items: center;
       gap: 0.75rem;
       font-size: 0.85rem;
-      color: rgba(250,247,242,0.55);
+      color: rgba(15,14,12,0.55);
     }
 
     .credential::before {
@@ -461,7 +509,7 @@
     }
 
     .archive-card {
-      background: var(--dark);
+      background: rgba(255,255,255,0.62);
       padding: 1.5rem 1.75rem;
       text-decoration: none;
       display: block;
@@ -470,7 +518,7 @@
     }
 
     .archive-card:hover {
-      background: var(--dark-2);
+      background: rgba(255,255,255,0.82);
     }
 
     .archive-card:hover .archive-card-arrow {
@@ -491,7 +539,7 @@
       font-family: 'Playfair Display', serif;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--warm-white);
+      color: var(--dark);
       line-height: 1.4;
       margin-bottom: 0.4rem;
     }
@@ -608,6 +656,11 @@
       <div class="nav-logo-icon">₿</div>
       <span class="nav-logo-text">Bitcoin History</span>
     </a>
+    <div class="nav-links">
+      <a class="nav-link" href="https://www.reddit.com/user/rizzobitcoinhistory/" target="_blank" rel="noopener">Reddit</a>
+      <a class="nav-link" href="https://x.com/pete_rizzo" target="_blank" rel="noopener">X</a>
+      <a class="nav-link" href="https://youtube.com/@Bitcoinhistory" target="_blank" rel="noopener">YouTube</a>
+    </div>
     <a href="#subscribe" class="nav-cta">Subscribe Free</a>
   </nav>
 
@@ -615,17 +668,20 @@
   <!-- ══ HERO ══ -->
   <div class="hero">
     <div class="hero-inner">
-      <span class="hero-eyebrow">Weekly Newsletter</span>
+      <span class="hero-eyebrow">Rizzo’s Newsletter</span>
       <h1 class="hero-title">
-        13 Years of<br /><em>Bitcoin History,</em><br />One Week at a Time
+        17 Years of<br /><em>Bitcoin History</em>
       </h1>
       <p class="hero-sub">
         The most important events, ideas, and moments in Bitcoin — curated every week by the journalist who has been there since the beginning.
       </p>
       <div class="subscribe-wrap" id="subscribe">
 
-        <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+        <div class="subscribe-card">
+          <div class="subscribe-card-title">Rizzo’s Newsletter</div>
+          <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
         <iframe src="https://subscribe-forms.beehiiv.com/9f5fbedc-27f7-4f36-984d-d81bd5919fa6" class="beehiiv-embed" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="width: 560px; height: 291px; margin: 0; border-radius: 0px 0px 0px 0px !important; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"></iframe>
+        </div>
 
       </div>
     </div>
@@ -638,15 +694,15 @@
   <section>
     <div class="section-label">Why Subscribe</div>
     <h2 class="section-title reveal">The Bitcoin archive<br />you've been missing</h2>
-    <p class="reveal" style="color: rgba(250,247,242,0.6); max-width: 560px; font-size: 1rem;">
-      Bitcoin has a rich, complicated history that shapes everything happening today. Most people only know the last cycle. Pete Rizzo has documented all of it.
+    <p class="reveal" style="color: rgba(15,14,12,0.60); max-width: 560px; font-size: 1rem;">
+      Bitcoin has a rich, complicated history that shapes everything happening today. Most people only know the last cycle. Rizzo has documented all of it.
     </p>
 
     <div class="props-grid">
       <div class="prop-card reveal">
-        <div class="prop-number">13</div>
+        <div class="prop-number">17</div>
         <div class="prop-title">Years of Primary Research</div>
-        <div class="prop-desc">Pete has been reporting on Bitcoin since 2013 — longer than most people have known what Bitcoin is.</div>
+        <div class="prop-desc">Rizzo has been documenting Bitcoin longer than most people have known what it is.</div>
       </div>
       <div class="prop-card reveal">
         <div class="prop-number">30+</div>
@@ -677,13 +733,13 @@
 
             Or leave the initials as-is until you have one.
           -->
-          <span class="portrait-initials">PR</span>
+          <img src="1L4A5379.jpg" alt="Pete Rizzo" />
         </div>
-        <p class="about-portrait-caption">Pete Rizzo — Bitcoin Historian</p>
+        <p class="about-portrait-caption">Rizzo — Bitcoin Historian</p>
       </div>
 
       <div class="about-content">
-        <h2 class="section-title reveal">Pete Rizzo</h2>
+        <h2 class="section-title reveal">Rizzo</h2>
         <p class="reveal">
           Pete Rizzo is one of the longest-serving journalists in Bitcoin, with a career spanning over a decade of covering the space at the highest level. He doesn't just report on Bitcoin — he has lived through its most pivotal moments and has the archives to prove it.
         </p>
@@ -713,7 +769,7 @@
       </div>
     </div>
 
-    <p class="reveal" style="color: rgba(250,247,242,0.6); max-width: 560px; font-size: 1rem; margin-bottom: 2.5rem;">
+    <p class="reveal" style="color: rgba(15,14,12,0.60); max-width: 560px; font-size: 1rem; margin-bottom: 2.5rem;">
       Every edition Pete has written is available to read in full — from deep dives into Bitcoin's earliest days to the moments that defined each cycle. No paywall, no sign-in required.
     </p>
 
@@ -725,7 +781,7 @@
 
   <!-- ══ FOOTER ══ -->
   <footer>
-    <div class="footer-logo">Bitcoin History Newsletter</div>
+    <div class="footer-logo">Rizzo’s Newsletter</div>
     <p class="footer-sub">© 2025 Pete Rizzo · All rights reserved</p>
   </footer>
 
